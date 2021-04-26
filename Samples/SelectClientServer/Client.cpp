@@ -1,12 +1,24 @@
 // 4.3Clienttr154.cpp 
+// client nhan dl tu server va in ra man hinh
 /*int select(
     int nfds,               // Không sử dụng
     fd_set FAR* readfds,   // Tập các socket hàm sẽ thăm dò cho sự kiện read
     fd_set FAR* writefds,  // Tập các socket hàm sẽ thăm dò cho sự kiện write
     fd_set FAR* exceptfds, // Tập các socket hàm sẽ thăm dò cho sự kiện except
     const struct timeval FAR* timeout // Thời gian thăm dò tối đa
-);*/
-// client nhan dl tu server va in ra man hinh
+);
+    
+struct timeval
+{
+ long tv_sec; //giây
+ long tv_usec; //mili giây
+};
+    FD_ZERO(*set): Khởi tạo một tập rỗng.
+	FD_CLR(s,*set): Xóa bỏ socket s ra khỏi tập s.
+	FD_ISSET(s,*set): Kiểm tra xem socket s có được thiết lập hay không.
+	FD_SET(s,*set): Thêm socket s vào tập s.
+*/
+
 
 #include <stdio.h>
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
