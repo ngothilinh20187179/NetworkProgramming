@@ -1,9 +1,9 @@
 // 4.3Server1tr154.cpp
 // Server chap nhan nhieu ket noi va xly du lieu
 
-#include <iostream>
 #include <stdio.h>
-#include <WinSock2.h>
+#include <winsock2.h>
+
 #pragma comment(lib, "ws2_32")
 
 int main()
@@ -13,60 +13,81 @@ int main()
 
 	SOCKADDR_IN addr;
 	addr.sin_family = AF_INET;
-	addr.sin_addr.s_addr = htonl(INADDR_ANY); // htonl - 4byte (little -> big)
-	addr.sin_port = htons(9000);// htons (2byte little -> big)
+	addr.sin_addr.s_addr = htonl(INADDR_ANY);
+	addr.sin_port = htons(9000);
 
 	SOCKET listener = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	bind(listener, (SOCKADDR*)&addr, sizeof(addr));
 	listen(listener, 5);
 
-
 	fd_set fdread;
-	int ret;
 
 	SOCKET clients[64];
-	int numClient = 0;
+	int numClients = 0;
+
+	timeval tv;
+	tv.tv_sec = 5;
+	tv.tv_usec = 0;
+
 	char buf[256];
+	int ret;
 
-	while (1) {
-
+	while (1)
+	{
+		// Khoi tao lai tap fd
 		FD_ZERO(&fdread);
 
+		// Gan cac socket vao tap fd
 		FD_SET(listener, &fdread);
-
-		for(int i=0;i<numClient;i++)
+		for (int i = 0; i < numClients; i++)
 			FD_SET(clients[i], &fdread);
 
-		ret = select(0, &fdread, 0, 0, 0);
-
-		if (ret < 0) {
+		// Su dung ham select de cho den khi co su kien
+		ret = select(0, &fdread, NULL, NULL, &tv);
+		
+		// Kiem tra loi
+		if (ret < 0)
+		{
+			printf("select() failed\n");
 			break;
 		}
-		if (FD_ISSET(listener, &fdread)) // ktr xem xra sk ko
+
+		// Neu het gio, co the thuc hien cac cong viec khac neu co
+		if (ret == 0)
 		{
-			SOCKET client = accept(listener, 0, 0);
-			const char* msg = "Hello client\n";
-			send(client, msg, strlen(msg), 0);
-			// khi socket dc acc thi them vao mang
-			printf("New client connect %d\n", client);
-			clients[numClient] = client;
-			numClient++;
+			printf("Timed out. Can do something else...\n");
+			continue;
 		}
 
-		for (int i = 0; i < numClient; i++)
+		// Kiem tra su kien xay ra cua socket nao
+		if (FD_ISSET(listener, &fdread))
 		{
+			// Su kien co ket noi moi
+			SOCKET client = accept(listener, NULL, NULL);
+
+			// Them socket vao mang
+			clients[numClients] = client;
+			numClients++;
+		}
+
+		for (int i = 0; i < numClients; i++)
 			if (FD_ISSET(clients[i], &fdread))
 			{
-				ret = recv(clients[i], buf, sizeof(buf));
+				ret = recv(clients[i], buf, sizeof(buf), 0);
+
 				if (ret <= 0)
 				{
-					// ket noi bi huy
-					// xoa client[i] ra khoi mang
-					continue; // ktr tung client
+					// Ket noi bi ngat
+					// Xoa client khoi mang
+					continue;
 				}
-				buf[ret] = 0;
-				printf("Data client %d: %s\n",clients[i], buf);
+
+				// Them ky tu ket thuc xau
+				if (ret < sizeof(buf))
+					buf[ret] = 0;
+				printf("Received from %d: %s\n", clients[i], buf);
+
+				// Xu ly du lieu nhan duoc theo giao thuc
 			}
-		}
 	}
 }
