@@ -1,5 +1,19 @@
 // EventSelectServer.cpp : Tao server theo mo hinh WSAEventSelect
-//
+/*WSAWaitForMultipleEvents(
+	DWORD cEvents,     //[IN] Số lượng sự kiện cần đợi
+	const WSAEVENT FAR * lphEvents, //[IN] Mảng sự kiện, max 64
+	BOOL fWaitAll,    //[IN] Có đợi tất cả các sự kiện không ?
+	DWORD dwTimeout, //[IN] Thời gian đợi tối đa
+	BOOL fAlertable)*/
+
+/*Giá trị trả về
+	Thành công: Số thứ tự của sự kiện xảy ra + WSA_WAIT_EVENT_0.
+	vd 0,1,2,3,4; xảy ra sự kiện 2,3,4 -> trả về 4 -> số sự kiện xra = 4 - WSA_WAIT_EVENT_0 = 4-1=3
+	Hết giờ: WSA_WAIT_TIMEOUT.
+	Thất bại: WSA_WAIT_FAILED.
+*/
+// cd netcat
+// nc64.exe -v -l -p 127.0.0.1 9000
 
 #include <stdio.h>
 #include <winsock2.h>
@@ -47,6 +61,13 @@ int main()
 
 	while (1)
 	{
+		/* WSAWaitForMultipleEvents(...)
+		* số lượng sự kiện trong mảng cần đợi là 1
+		* gán vào địa chỉ newEvent
+		* FALSE ko đợi tất cả các sk
+		* WSA_INFINITE tg đợi tối đa, tham số này ko quan tâm thời gian timeout, chỉ trả về khi 1 trg những sk xảy ra hoặc bị lỗi gì đó
+		* FALSE 
+		*/
 		// Cho cho den khi 1 su kien duoc bao hieu
 		ret = WSAWaitForMultipleEvents(numEvents, events, FALSE, WSA_INFINITE, FALSE);
 		idx = ret - WSA_WAIT_EVENT_0;
@@ -54,6 +75,11 @@ int main()
 		// Duyet tu su kien duoc bao hieu den cac su kien tiep theo trong mang
 		for (int i = idx; i < numEvents; i++)
 		{
+			/*gọi hàm WSAWaitForMultipleEvents với từng sk của đối tượng
+			 slg sk =1, địa chỉ là sự kiện tại đối tượng i
+			 waitAll true hay false như nhau vì chỉ có 1 sk
+			 time out =0 để đối với những sk phía sau chưa chuyển sang trạng thái báo hiệu nó sẽ trả về gtr là wait time out 
+			 đối tượng đã chuyển sang báo hiệu thì trả về 0*/
 			// Kiem tra su kien co xay ra hay khong
 			ret = WSAWaitForMultipleEvents(1, &events[i], TRUE, 0, FALSE);
 			if (ret == WSA_WAIT_FAILED || ret == WSA_WAIT_TIMEOUT)
