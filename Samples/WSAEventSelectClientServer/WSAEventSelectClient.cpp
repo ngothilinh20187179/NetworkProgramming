@@ -1,4 +1,6 @@
 // WSAEventSelectClient.cpp : This file contains the 'main' function. Program execution begins and ends there.
+// cd netcat
+// nc64.exe -v -l -p 127.0.0.1
 // kết quả cứ 5s in dòng 'Time out'
 
 #include <stdio.h>
