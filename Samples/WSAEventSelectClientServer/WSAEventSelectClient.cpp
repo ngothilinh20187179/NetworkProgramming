@@ -1,5 +1,5 @@
 // WSAEventSelectClient.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+// kết quả cứ 5s in dòng 'Time out'
 
 #include <stdio.h>
 #include <winsock2.h>
