@@ -10,15 +10,6 @@
 // nc64.exe -v -l -p 9000
 
 #include <stdio.h>
-#include <winsock2.h>
-#pragma comment(lib, "ws2_32")
-#define _WINSOCK_DEPRECATED_NO_WARNINGS
-
-#define WM_SOCKET WM_USER + 1
-
-BOOL CALLBACK WinProc(HWND, UINT, WPARAM, LPARAM); // ham xu ly su kien cua cua so
-
-#include <stdio.h>
 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include <winsock2.h>
@@ -28,6 +19,7 @@ BOOL CALLBACK WinProc(HWND, UINT, WPARAM, LPARAM); // ham xu ly su kien cua cua 
 #define WM_SOCKET WM_USER + 1
 
 BOOL CALLBACK WinProc(HWND, UINT, WPARAM, LPARAM);
+
 
 int main()
 {
