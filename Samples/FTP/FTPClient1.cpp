@@ -1,4 +1,5 @@
 // FTPClient.cpp : This file contains the 'main' function. Program execution begins and ends there.
+// Đăng nhập và thực hiện lệnh LIST
 
 #include <stdio.h>
 #include <string.h>
